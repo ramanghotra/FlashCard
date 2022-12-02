@@ -31,12 +31,12 @@ router.post("/register", validInfo, async (req, res) => {
 		const bcryptPassword = await bcrypt.hash(password, salt);
 
 		// generate a uuid
-		const uuid = uuid();
+		const uuidtoken = uuid();
 
 		// enter the new user inside our database
 		const newUser = await pool.query(
 			"INSERT INTO users (user_id, user_firstname, user_lastname, user_email, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-			[uuid, firstname, lastname, email, bcryptPassword]
+			[uuidtoken, firstname, lastname, email, bcryptPassword]
 		);
 
 		// generating our jwt token
