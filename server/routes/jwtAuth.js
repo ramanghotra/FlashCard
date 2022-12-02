@@ -5,6 +5,9 @@ const jwtGenerator = require("../jwtGenerator");
 const validInfo = require("../middleware/validinfo");
 const authorization = require("../middleware/authorization");
 
+// import uuid
+const { uuid } = require('uuidv4');
+
 // registering route
 router.post("/register", validInfo, async (req, res) => {
 	console.log("register", req.body);
@@ -28,7 +31,7 @@ router.post("/register", validInfo, async (req, res) => {
 		const bcryptPassword = await bcrypt.hash(password, salt);
 
 		// generate a uuid
-		const uuid = uuidv4();
+		const uuid = uuid();
 
 		// enter the new user inside our database
 		const newUser = await pool.query(
