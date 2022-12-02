@@ -116,16 +116,25 @@ router.delete("/delete/deck", authorization, async (req, res) => {
 			[deck_id]
 		);
 
+		// delete from accuracy table
+		const deleteAccuracy = await pool.query(
+			"DELETE FROM accuracy WHERE deck_id = $1",
+			[deck_id]
+		);
+
+		console.log("cards deleted");
 		// delete all favourites in the deck
 		const deleteFavourites = await pool.query(
 			"DELETE FROM favourites WHERE deck_id = $1",
 			[deck_id]
 		);
+		console.log("favourites deleted");
 
 		const deleteDeck = await pool.query(
-			"DELETE FROM decks WHERE deck_id = $1 AND user_id = $2 RETURNING *",
-			[deck_id, req.user]
+			"DELETE FROM decks WHERE deck_id = $1 RETURNING *",
+			[deck_id]
 		);
+		console.log("deck deleted");
 
 		res.json(deleteDeck.rows);
 
@@ -147,6 +156,11 @@ router.delete("/admin/delete/deck", authorization, async (req, res) => {
 		// delete all cards in the deck
 		const deleteCards = await pool.query(
 			"DELETE FROM flashcards WHERE deck_id = $1",
+			[deck_id]
+		);
+
+		const deleteAccuracy = await pool.query(
+			"DELETE FROM accuracy WHERE deck_id = $1",
 			[deck_id]
 		);
 

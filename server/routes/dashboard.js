@@ -5,10 +5,6 @@ const authorization = require("../middleware/authorization");
 // get all decks
 router.get("/", authorization, async (req, res) => {
 	try {
-		// res.json(req.user);
-		// Req.user has the uuid of the specific user. This can be used to get the user's information from the database.
-		// authorization middleware will check if the token is valid
-		// authorization also has the user's id
 		const user = await pool.query(
 			"SELECT user_firstname, user_lastname FROM users WHERE user_id = $1",
 			[req.user]
@@ -84,7 +80,6 @@ router.delete("/favourites", authorization, async (req, res) => {
 // get a deck
 router.get("/:id", authorization, async (req, res) => {
 	try {
-		// get user first name and email from users table and get all flashcards from flashcards table
 		const user = await pool.query(
 			"SELECT user_firstname, user_lastname FROM users WHERE user_id = $1",
 			[req.user]

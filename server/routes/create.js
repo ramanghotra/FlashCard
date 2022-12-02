@@ -45,10 +45,6 @@ router.post("/cards", authorization, async (req, res) => {
 
 router.get("/", authorization, async (req, res) => {
 	try {
-		// res.json(req.user);
-		// Req.user has the uuid of the specific user. This can be used to get the user's information from the database.
-		// authorization middleware will check if the token is valid
-		// authorization also has the user's id
 		const user = await pool.query(
 			"SELECT user_firstname, user_lastname FROM users WHERE user_id = $1",
 			[req.user]
