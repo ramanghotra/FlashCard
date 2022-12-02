@@ -9,9 +9,6 @@ CREATE TABLE users (
     user_role varchar(50) NOT NULL DEFAULT 'user'
 );
 
-INSERT into users (user_firstname, user_lastname, user_email, user_password) VALUES ('Noah', 'Test', 'noahtest1@email.com', 'password');
-
-
 -- Create a flashcard deck table with deck_id(uuid),user_id, deck_name, deck_description, course_name, attempts, last_score, accuracy
 CREATE TABLE decks (
     deck_id BIGSERIAL PRIMARY KEY,
@@ -37,13 +34,23 @@ CREATE TABLE decks (
 -- );
 
 -- create a flashcard table with flashcard_id(uuid), deck_id, question, answer, correct_count, incorrect_count
+DROP TABLE IF EXISTS flashcards;
 CREATE TABLE flashcards (
-    flashcard_id BIGINT PRIMARY KEY,
+    flashcard_id BIGSERIAL PRIMARY KEY,
     deck_id BIGSERIAL NOT NULL REFERENCES decks(deck_id),
     question varchar(250) NOT NULL,
     answer varchar(250) NOT NULL,
     correct_count int NOT NULL DEFAULT 0,
     incorrect_count int NOT NULL DEFAULT 0
+);
+
+
+-- Creata a favourites table with favourite_id(uuid), user_id, deck_id
+DROP TABLE IF EXISTS favourites;
+CREATE TABLE favourites (
+    favourite_id BIGSERIAL PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES users(user_id),
+    deck_id BIGSERIAL NOT NULL REFERENCES decks(deck_id)
 );
 
 
@@ -62,3 +69,22 @@ INSERT INTO flashcards (deck_id, question, answer) VALUES (1, 'What is the capit
 INSERT INTO flashcards (deck_id, question, answer) VALUES (1, 'What is the capital of Brazil?', 'Brasilia');
 INSERT INTO flashcards (deck_id, question, answer) VALUES (1, 'What is the capital of Argentina?', 'Buenos Aires');
 
+
+-- Create an admin user
+INSERT INTO users (user_firstname, user_lastname, user_email, user_password, user_role) VALUES ('Admin', 'Admin', 'admin@gmail.com', 'password', 'admin');
+
+
+
+-- create a math deck with 10 cards for multiplication
+INSERT INTO decks (user_id, deck_name, deck_description, course_name) VALUES ('b6596693-03cc-4da0-ad54-97ff8d16fa3a', 'Multiplication', 'This is a deck for multiplication', 'Math');
+
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 2 = ?', '4');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 3 = ?', '6');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 4 = ?', '8');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 5 = ?', '10');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 6 = ?', '12');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 7 = ?', '14');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 8 = ?', '16');
+INSERT INTO flashcards (deck_id, question, answer) VALUES (6, '2 x 9 = ?', '18');
+
+    

@@ -20,6 +20,12 @@ app.use("/dashboard", require("./routes/dashboard"));
 // create route
 app.use("/create", require("./routes/create"));
 
+// profile route
+app.use("/profile", require("./routes/profile"));
+
+// study route
+app.use("/study", require("./routes/study"));
+
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`);
 });

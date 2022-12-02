@@ -21,14 +21,14 @@ router.post("/", authorization, async (req, res) => {
 	}
 });
 
-
 // create a flashcard
-router.post("/create/cards", authorization, async (req, res) => {
+router.post("/cards", authorization, async (req, res) => {
+	console.log("create cards", req.body);
 	try {
-		const { question, answer, deckId } = req.body;
+		const { question, answer, deck_id } = req.body;
 		const newFlashcard = await pool.query(
 			"INSERT INTO flashcards (question, answer, deck_id) VALUES($1, $2, $3) RETURNING *",
-			[question, answer, deckId]
+			[question, answer, deck_id]
 		);
 		res.json(newFlashcard.rows[0]);
 	} catch (err) {
@@ -36,7 +36,6 @@ router.post("/create/cards", authorization, async (req, res) => {
 		res.status(500).json("Server Error");
 	}
 });
-
 
 router.get("/", authorization, async (req, res) => {
 	try {
@@ -61,7 +60,6 @@ router.get("/", authorization, async (req, res) => {
 		res.status(500).send("Server Error");
 	}
 });
-
 
 // get all decks
 router.get("/", authorization, async (req, res) => {

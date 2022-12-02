@@ -16,10 +16,29 @@ router.get("/", authorization, async (req, res) => {
 
 		const decks = await pool.query("SELECT * FROM decks");
 
+		// get favourites for the user
+		const favourites = await pool.query(
+			"SELECT * FROM favourites WHERE user_id = $1",
+			[req.user]
+		);
+
+		// add a boolean to each deck to indicate if it is a favourite or not
+		let decksWithFavourites = decks.rows.map((deck) => {
+			const favourite = favourites.rows.find(
+				(favourite) => favourite.deck_id === deck.deck_id
+			);
+			return {
+				...deck,
+				favourite: favourite ? true : false,
+			};
+		});
+
+		newdecks = decksWithFavourites;
+
 		res.json({
 			results: decks.rows.length,
 			user: user.rows[0],
-			decks: decks.rows,
+			decks: newdecks,
 		});
 	} catch (err) {
 		console.log("Error in dashboard.js", err.message);
@@ -27,7 +46,36 @@ router.get("/", authorization, async (req, res) => {
 	}
 });
 
+// add a deck to favourites table in database
+router.post("/favourites", authorization, async (req, res) => {
+	try {
+		const { deck_id } = req.body;
+		console.log(req.body);
+		const newFavourite = await pool.query(
+			"INSERT INTO favourites (user_id, deck_id) VALUES($1, $2) RETURNING *",
+			[req.user, deck_id]
+		);
+		res.json(newFavourite.rows[0]);
+	} catch (err) {
+		console.log("Error in dashboard.js", err.message);
+		res.status(500).send("Server Error");
+	}
+});
 
+// remove a deck from favourites table using deck_id and user_id
+router.delete("/favourites", authorization, async (req, res) => {
+	try {
+		const { deck_id } = req.body;
+		const deleteFavourite = await pool.query(
+			"DELETE FROM favourites WHERE user_id = $1 AND deck_id = $2",
+			[req.user, deck_id]
+		);
+		res.json("Favourite was deleted!");
+	} catch (err) {
+		console.log("Error in dashboard.js", err.message);
+		res.status(500).send("Server Error");
+	}
+});
 
 // get a deck
 router.get("/:id", authorization, async (req, res) => {
