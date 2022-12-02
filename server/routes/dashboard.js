@@ -16,6 +16,10 @@ router.get("/", authorization, async (req, res) => {
 
 		const decks = await pool.query("SELECT * FROM decks");
 
+		const message = await pool.query(
+			"SELECT message FROM banner ORDER BY messageid DESC LIMIT 1"
+		);
+
 		// get favourites for the user
 		const favourites = await pool.query(
 			"SELECT * FROM favourites WHERE user_id = $1",
@@ -34,11 +38,11 @@ router.get("/", authorization, async (req, res) => {
 		});
 
 		newdecks = decksWithFavourites;
-
 		res.json({
 			results: decks.rows.length,
 			user: user.rows[0],
 			decks: newdecks,
+			message: message.rows[0],
 		});
 	} catch (err) {
 		console.log("Error in dashboard.js", err.message);

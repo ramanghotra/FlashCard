@@ -49,6 +49,21 @@ router.get("/", authorization, async (req, res) => {
 	}
 });
 
+// set message in banner table
+router.post("/admin/banner", authorization, async (req, res) => {
+	try {
+		const { message } = req.body;
+		const newMessage = await pool.query(
+			"INSERT INTO banner (message) VALUES($1) RETURNING *",
+			[message]
+		);
+		res.json(newMessage.rows[0]);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json("Server Error");
+	}
+});
+
 // get a deck and its cards
 router.get("/edit/:id", authorization, async (req, res) => {
 	try {
@@ -258,7 +273,5 @@ router.get("/admin", authorization, async (req, res) => {
 		res.status(500).send("Server Error");
 	}
 });
-
-
 
 module.exports = router;

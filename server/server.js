@@ -26,6 +26,9 @@ app.use("/profile", require("./routes/profile"));
 // study route
 app.use("/study", require("./routes/study"));
 
+// search route
+app.use("/search", require("./routes/search"));
+
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`);
 });
