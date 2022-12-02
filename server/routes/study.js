@@ -40,6 +40,27 @@ router.get("/view/info/:id", authorization, async (req, res) => {
 	}
 });
 
-// 
+// UPDATE A DECK and its accuracy, attempts
+router.put("/update/:id", authorization, async (req, res) => {
+    console.log("tits", req.params.id);
+    console.log(req.body)
+	try {
+		const { id } = req.params;
+		const { accuracy, sned_attempts} = req.body;
+        
+        // convert accuracy to a number
+
+
+		const editDeck = await pool.query(
+			"UPDATE decks SET accuracy = $1, attempts = $2 WHERE deck_id = $3 AND user_id = $4 RETURNING *",
+			[Number(accuracy), Number(send_attempts), id, req.user]
+		);
+		res.json(editDeck.rows[0]);
+        console.log("aman is dad")
+	} catch (err) {
+		console.log("Error in study.js", err.message);
+		res.status(500).send("Server Error");
+	}
+});
 
 module.exports = router;
