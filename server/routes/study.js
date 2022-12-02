@@ -30,9 +30,32 @@ router.get("/view/info/:id", authorization, async (req, res) => {
 			"SELECT * FROM flashcards WHERE deck_id = $1",
 			[id]
 		);
+       
+
+        // check if deck_id and user_id exist in accruacy table
+        const accuracy = await pool.query(
+            "SELECT * FROM accuracy WHERE deck_id = $1 AND user_id = $2",
+            [id, req.user]
+        );
+
+        // if it does not exist, insert it
+        if (accuracy.rows.length === 0) {
+            const insertAccuracy = await pool.query(
+                "INSERT INTO accuracy (deck_id, user_id, accuracy, attempts) VALUES ($1, $2, $3, $4) RETURNING *",
+                [id, req.user, 0, 0]
+            );
+        } 
+        
+        // get the accuracy and attempts
+        const getAccuracy = await pool.query(
+            "SELECT * FROM accuracy WHERE deck_id = $1 AND user_id = $2",
+            [id, req.user]
+        );
+            
 		res.json({
 			deck: deck.rows[0],
 			cards: cards.rows,
+            accuracy: getAccuracy.rows[0]
 		});
 	} catch (err) {
 		console.log("Error in edit.js", err.message);
@@ -42,21 +65,20 @@ router.get("/view/info/:id", authorization, async (req, res) => {
 
 // UPDATE A DECK and its accuracy, attempts
 router.put("/update/:id", authorization, async (req, res) => {
-    console.log("tits", req.params.id);
-    console.log(req.body)
+	console.log("tits", req.params.id);
+	console.log(req.body);
 	try {
 		const { id } = req.params;
-		const { accuracy, sned_attempts} = req.body;
-        
-        // convert accuracy to a number
+		const { send_accuracy, new_attempts } = req.body;
 
+		// convert accuracy to a number
 
 		const editDeck = await pool.query(
-			"UPDATE decks SET accuracy = $1, attempts = $2 WHERE deck_id = $3 AND user_id = $4 RETURNING *",
-			[Number(accuracy), Number(send_attempts), id, req.user]
+			"UPDATE accuracy SET accuracy = $1, attempts = $2 WHERE deck_id = $3 AND user_id = $4 ",
+			[Number(send_accuracy), Number(new_attempts), id, req.user]
 		);
 		res.json(editDeck.rows[0]);
-        console.log("aman is dad")
+		console.log("aman is dad");
 	} catch (err) {
 		console.log("Error in study.js", err.message);
 		res.status(500).send("Server Error");

@@ -11,6 +11,12 @@ router.post("/", authorization, async (req, res) => {
 			"INSERT INTO decks (deck_name, deck_description, user_id, course_name) VALUES($1, $2, $3, $4) RETURNING *",
 			[deckName, deckDescription, req.user, courseInfo]
 		);
+
+		const accuracyDeck = await pool.query(
+			"INSERT INTO accuracy (deck_id, user_id) VALUES($1, $2) RETURNING *",
+			[newDeck.rows[0].deck_id, req.user]
+		);
+		
 		res.json(newDeck.rows[0]);
 
 		console.log("newDeck", newDeck);
