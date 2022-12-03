@@ -10,7 +10,6 @@ module.exports = async (req, res, next) => {
 		if (!jwtToken) {
 			return res.status(403).json("Not Authorized");
 		}
-
 		// verify token
 		const payload = jwt.verify(jwtToken, process.env.jwtSecret);
 

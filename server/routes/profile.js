@@ -203,6 +203,12 @@ router.delete("/delete/user", authorization, async (req, res) => {
 			[user_id]
 		);
 
+		// delete accurcy associated with user
+		const deleteAccuracy = await pool.query(
+			"DELETE FROM accuracy WHERE user_id = $1",
+			[user_id]
+		);
+
 		// delete the user
 		const deleteUser = await pool.query(
 			"DELETE FROM users WHERE user_id = $1 RETURNING *",
