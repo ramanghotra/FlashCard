@@ -2,7 +2,7 @@ const router = require("express").Router();
 const pool = require("../db");
 const authorization = require("../middleware/authorization");
 
-// create a deck
+// creates a deck
 router.post("/", authorization, async (req, res) => {
 	try {
 		const { deckName, deckDescription, courseInfo } = req.body;
